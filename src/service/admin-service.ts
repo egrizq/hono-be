@@ -32,10 +32,10 @@ export class AdminService {
     const { username, password } = parseResult.data;
 
     //* check params
-    const allowedRoles = ["manager", "driver"];
+    const allowedRoles = ["manager", "driver", "admin"];
     const { role } = context.req.param();
 
-    if (role && !allowedRoles.includes(role)) {
+    if (!role || !allowedRoles.includes(role)) {
       throw new responseError(
         httpStatus.BAD_REQUEST,
         errorMessage.INVALID_PARAMS
@@ -133,7 +133,7 @@ export class AdminService {
 
     if (!authToken) {
       throw new responseError(
-        httpStatus.NOT_FOUND,
+        httpStatus.UNAUTHORIZED,
         errorMessage.UNAUTHORIZED_ACCESS
       );
     }
@@ -141,6 +141,4 @@ export class AdminService {
 
     return "Logout successfully";
   }
-
-  static async createAccount(context: Context) {}
 }

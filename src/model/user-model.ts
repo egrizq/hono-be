@@ -16,19 +16,19 @@ export interface userInsertModel {
   name: string;
   username: string;
   password: string;
-  role?: string;
+  role: string;
 }
 
 export const formatNewData = (
   data: userCreateModel,
   hashPass: string,
-  role?: string
+  role: string
 ) => {
   return {
     name: data.name,
     username: data.username,
     password: hashPass,
-    role: data.username.includes("admin") ? "admin" : role,
+    role: role,
   };
 };
 
