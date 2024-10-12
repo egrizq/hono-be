@@ -41,3 +41,8 @@ export const userLoginSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
+
+export interface getUserPassAndRole {
+  hashedPassword: string | null;
+  role: string | null;
+}

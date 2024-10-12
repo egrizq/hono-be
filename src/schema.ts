@@ -5,7 +5,6 @@ import {
   pgTable,
   integer,
   date,
-  decimal,
 } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
@@ -23,8 +22,9 @@ export const usersTable = pgTable("users", {
 
 export const vehicleTable = pgTable("vehicle", {
   id: serial("id").primaryKey(),
-  name: text("name"),
-  bbm_consume: decimal("bbm_consume"),
+  vehicle_name: text("vehicle_name"),
+  type: text("type"),
+  bbm_consumption: integer("bbm_consumption"),
   status: text("status"),
 
   createdAt: timestamp("created_at").defaultNow(),

@@ -3,8 +3,9 @@ import { type userLoginModel, type userCreateModel } from "../model/user-model";
 import { AdminService } from "../service/admin-service";
 import { httpStatus } from "../helper/http-status";
 import { catchError } from "../error/error-response";
+import type { vehicleCreateModel } from "../model/vehicle-model";
 
-export class UserController {
+export class AdminController {
   static async createAccount(context: Context) {
     try {
       const requestJSON: userCreateModel = await context.req.json();
@@ -54,4 +55,23 @@ export class UserController {
       return await catchError(context, error);
     }
   }
+
+  static async createVehicle(context: Context) {
+    try {
+      const requestJSON: vehicleCreateModel = await context.req.json();
+      const response = await AdminService.createVehicle(requestJSON);
+
+      return context.json(
+        {
+          status_code: httpStatus.CREATED,
+          message: response,
+        },
+        httpStatus.CREATED
+      );
+    } catch (error) {
+      return await catchError(context, error);
+    }
+  }
+
+  static async createDocument(context: Context) {}
 }

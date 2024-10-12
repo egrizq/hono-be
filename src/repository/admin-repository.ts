@@ -1,9 +1,24 @@
 import { eq } from "drizzle-orm";
 import { db } from "../app/database";
 import { usersTable } from "../schema";
-import type { userInsertModel } from "../model/user-model";
+import type { getUserPassAndRole, userInsertModel } from "../model/user-model";
 
 export class AdminRepository {
+  static async findUserByUsername(
+    username: string
+  ): Promise<getUserPassAndRole> {
+    const result = await db
+      .select({
+        hashedPassword: usersTable.password,
+        role: usersTable.role,
+      })
+      .from(usersTable)
+      .where(eq(usersTable.username, username))
+      .limit(1);
+
+    return result[0];
+  }
+
   static async checkUsernameExist(username: string): Promise<boolean> {
     const result = await db
       .select({ username: usersTable.username })
@@ -21,14 +36,5 @@ export class AdminRepository {
       .returning({ id: usersTable.id });
 
     return insertedUser.length !== 0;
-  }
-
-  static async checkPassword(username: string): Promise<string> {
-    const hashedPassword = await db
-      .select({ password: usersTable.password })
-      .from(usersTable)
-      .where(eq(usersTable.username, username));
-
-    return hashedPassword[0].password!;
   }
 }

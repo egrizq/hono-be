@@ -1,12 +1,20 @@
 export class errorMessage {
-  static readonly USERNAME_TAKEN = "Username is already taken";
+  static readonly USERNAME_TAKEN =
+    "The username you've chosen is already in use. Please select a different username.";
+  static readonly TYPE_TAKEN =
+    "This type is already registered in our system. Please choose a different type or contact support for assistance.";
   static readonly INVALID_DATA =
-    "Invalid input data: some fields cannot be empty";
-  static readonly INVALID_PARAMS = "Invalid params";
-  static readonly INTERNAL_SERVER_ERROR = "Internal server error";
-  static readonly USER_NOT_FOUND = "User not found";
-  static readonly UNAUTHORIZED_ACCESS = "Unauthorized access";
+    "Please ensure all required fields are filled out correctly. Some important information is missing or invalid.";
+  static readonly INVALID_PARAMS =
+    "The provided parameters are invalid. Please check your input and try again.";
+  static readonly INTERNAL_SERVER_ERROR =
+    "We're experiencing technical difficulties. Please try again later or contact support if the problem persists.";
+  static readonly USER_NOT_FOUND =
+    "We couldn't find an account associated with this information. Please check your details or create a new account.";
+  static readonly UNAUTHORIZED_ACCESS =
+    "You don't have permission to access this resource. Please log in for access.";
   static readonly USERNAME_PASSWORD_INCORRECT =
-    "Username or Passwords is incorrect";
-  static readonly EMPTY_TOKEN = "No token found";
+    "The username or password you entered is incorrect.";
+  static readonly EMPTY_TOKEN =
+    "Your session has expired or you're not logged in. Please log in to continue.";
 }

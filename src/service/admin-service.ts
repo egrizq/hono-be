@@ -12,6 +12,8 @@ import { AdminRepository } from "../repository/admin-repository";
 import { deleteCookie, getSignedCookie, setSignedCookie } from "hono/cookie";
 import { responseError } from "../error/error-response";
 import { generateJWTToken } from "../helper/jwt-token";
+import { vehicleSchema, type vehicleCreateModel } from "../model/vehicle-model";
+import { VehicleRepository } from "../repository/vehicle-repository";
 
 export class AdminService {
   static readonly JWT_TOKEN = process.env.JWT!;
@@ -70,7 +72,7 @@ export class AdminService {
     const { jwtToken, CookieOptions } = await generateJWTToken(username);
     await setSignedCookie(
       context,
-      "token",
+      `${role}-token`,
       jwtToken,
       this.JWT_TOKEN,
       CookieOptions
@@ -85,27 +87,26 @@ export class AdminService {
 
     if (!parseResult.success) {
       throw new responseError(
-        httpStatus.UNAUTHORIZED,
+        httpStatus.BAD_REQUEST,
         errorMessage.INVALID_DATA
       );
     }
     const { username, password } = parseResult.data;
 
     //* check username exist
-    const isUsernameExist = await AdminRepository.checkUsernameExist(username);
-
-    if (isUsernameExist) {
+    const usersDetails = await AdminRepository.findUserByUsername(username);
+    if (!usersDetails) {
       throw new responseError(
         httpStatus.UNAUTHORIZED,
         errorMessage.USERNAME_PASSWORD_INCORRECT
       );
     }
+    const { hashedPassword, role } = usersDetails;
 
     //* check password
-    const hashedPassword = await AdminRepository.checkPassword(username);
     const isPasswordCorrect = await Bun.password.verify(
       password,
-      hashedPassword
+      hashedPassword!
     );
 
     if (!isPasswordCorrect) {
@@ -114,22 +115,28 @@ export class AdminService {
         errorMessage.USERNAME_PASSWORD_INCORRECT
       );
     }
+    console.log("pass password check");
 
     //* set jwt-session
     const { jwtToken, CookieOptions } = await generateJWTToken(username);
     await setSignedCookie(
       context,
-      "token",
+      `${role}-token`,
       jwtToken,
       this.JWT_TOKEN,
       CookieOptions
     );
 
-    return "Login successfull";
+    return "Login successfully";
   }
 
   static async logout(context: Context): Promise<string> {
-    const authToken = await getSignedCookie(context, this.JWT_TOKEN, "token");
+    const { role } = context.req.param();
+    const authToken = await getSignedCookie(
+      context,
+      this.JWT_TOKEN,
+      `${role}-token`
+    );
 
     if (!authToken) {
       throw new responseError(
@@ -141,4 +148,37 @@ export class AdminService {
 
     return "Logout successfully";
   }
+
+  static async createVehicle(data: vehicleCreateModel): Promise<string> {
+    //* parse JSON
+    const parseResult = vehicleSchema.safeParse(data);
+
+    if (!parseResult.success) {
+      throw new responseError(
+        httpStatus.BAD_REQUEST,
+        errorMessage.INVALID_DATA
+      );
+    }
+
+    //* check type is exist
+    const isTypeExist = await VehicleRepository.checkTypeExist(data.type);
+    if (isTypeExist) {
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.TYPE_TAKEN);
+    }
+
+    //* insert new vehicle to db
+    const isSuccessRegisterVehicle = await VehicleRepository.insertNewVehicle(
+      data
+    );
+    if (!isSuccessRegisterVehicle) {
+      throw new responseError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage.INTERNAL_SERVER_ERROR
+      );
+    }
+
+    return "Vehicle registered successfully";
+  }
+
+  static async createDocument() {}
 }

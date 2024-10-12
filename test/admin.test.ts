@@ -20,6 +20,7 @@ describe("POST /admin/create/:role", () => {
       }),
     });
     const res = await app.request(req);
+    console.log(res.headers);
 
     expect(res.headers.get("set-cookie")).toBeDefined();
     expect(res.status).toBe(httpStatus.CREATED);
