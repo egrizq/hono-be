@@ -1,12 +1,14 @@
 import type { Context } from "hono";
-import { type userLoginModel, type userCreateModel } from "../model/user-model";
-import { AdminService } from "../service/admin-service";
+import {
+  type userLoginModel,
+  type userCreateModel,
+} from "../model/users-model";
+import { AdminService } from "../service/auth-service";
 import { httpStatus } from "../helper/http-status";
 import { catchError } from "../error/error-response";
-import type { vehicleCreateModel } from "../model/vehicle-model";
 
-export class AdminController {
-  static async createAccount(context: Context) {
+export class UserController {
+  static async register(context: Context) {
     try {
       const requestJSON: userCreateModel = await context.req.json();
       const response = await AdminService.register(context, requestJSON);
@@ -16,7 +18,7 @@ export class AdminController {
           status_code: httpStatus.CREATED,
           message: response,
         },
-        httpStatus.CREATED
+        httpStatus.CREATED,
       );
     } catch (error) {
       return await catchError(context, error);
@@ -33,7 +35,7 @@ export class AdminController {
           status_code: httpStatus.OK,
           message: response,
         },
-        httpStatus.OK
+        httpStatus.OK,
       );
     } catch (error) {
       return await catchError(context, error);
@@ -49,29 +51,10 @@ export class AdminController {
           status_code: httpStatus.OK,
           message: response,
         },
-        httpStatus.OK
+        httpStatus.OK,
       );
     } catch (error) {
       return await catchError(context, error);
     }
   }
-
-  static async createVehicle(context: Context) {
-    try {
-      const requestJSON: vehicleCreateModel = await context.req.json();
-      const response = await AdminService.createVehicle(requestJSON);
-
-      return context.json(
-        {
-          status_code: httpStatus.CREATED,
-          message: response,
-        },
-        httpStatus.CREATED
-      );
-    } catch (error) {
-      return await catchError(context, error);
-    }
-  }
-
-  static async createDocument(context: Context) {}
 }

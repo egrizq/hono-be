@@ -1,16 +1,19 @@
 import { eq } from "drizzle-orm";
 import { db } from "../app/database";
 import { usersTable } from "../schema";
-import type { getUserPassAndRole, userInsertModel } from "../model/user-model";
+import type { userInsertModel } from "../model/users-model";
 
-export class AdminRepository {
-  static async findUserByUsername(
-    username: string
-  ): Promise<getUserPassAndRole> {
+interface TypeFindUsername {
+  id: number;
+  hashedPassword: string | null;
+}
+
+export class UserRepository {
+  static async findUserByUsername(username: string): Promise<TypeFindUsername> {
     const result = await db
       .select({
+        id: usersTable.id,
         hashedPassword: usersTable.password,
-        role: usersTable.role,
       })
       .from(usersTable)
       .where(eq(usersTable.username, username))
@@ -29,12 +32,12 @@ export class AdminRepository {
     return result.length === 0;
   }
 
-  static async insertNewUser(data: userInsertModel): Promise<boolean> {
+  static async insertNewUser(data: userInsertModel): Promise<number | null> {
     const insertedUser = await db
       .insert(usersTable)
       .values(data)
       .returning({ id: usersTable.id });
 
-    return insertedUser.length !== 0;
+    return insertedUser[0].id;
   }
 }

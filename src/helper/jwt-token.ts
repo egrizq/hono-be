@@ -2,8 +2,8 @@ import { sign } from "hono/jwt";
 
 const JWT_TOKEN = process.env.JWT!;
 
-export const generateJWTToken = async (username: string) => {
-  const jwtToken = await sign({ user: username }, JWT_TOKEN);
+export const generateJWTToken = async (id: number) => {
+  const jwtToken = await sign({ id: id }, JWT_TOKEN);
   const CookieOptions = {
     httpOnly: true,
     secure: true,

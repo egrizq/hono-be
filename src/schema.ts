@@ -1,18 +1,10 @@
-import {
-  serial,
-  text,
-  timestamp,
-  pgTable,
-  integer,
-  date,
-} from "drizzle-orm/pg-core";
+import { serial, text, timestamp, pgTable, integer } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   name: text("name"),
   username: text("username"),
   password: text("password"),
-  role: text("role"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at")
@@ -20,12 +12,11 @@ export const usersTable = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
-export const vehicleTable = pgTable("vehicle", {
+export const postTable = pgTable("posts", {
   id: serial("id").primaryKey(),
-  vehicle_name: text("vehicle_name"),
-  type: text("type"),
-  bbm_consumption: integer("bbm_consumption"),
-  status: text("status"),
+  user_id: integer("user_id").references(() => usersTable.id),
+  title: text("title"),
+  content: text("content"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at")
@@ -33,26 +24,11 @@ export const vehicleTable = pgTable("vehicle", {
     .$onUpdate(() => new Date()),
 });
 
-export const driverTable = pgTable("driver", {
+export const commentTable = pgTable("comments", {
   id: serial("id").primaryKey(),
-  users_id: integer("users_id").references(() => usersTable.id),
-  status: text("status"),
-
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
-
-export const documentTable = pgTable("document", {
-  id: serial("id").primaryKey(),
-  document: text("document"),
-  id_vehicle: integer("id_vehicle").references(() => vehicleTable.id),
-  id_driver: integer("id_driver").references(() => driverTable.id),
-  destination: text("destination"),
-  date: date("date"),
-  id_manager: integer("id_manager").references(() => usersTable.id),
-  status: text("status"),
+  user_id: integer("user_id").references(() => usersTable.id),
+  post_id: integer("post_id").references(() => postTable.id),
+  comment: text("comment"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at")
@@ -63,11 +39,8 @@ export const documentTable = pgTable("document", {
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;
 
-export type InsertVehicle = typeof vehicleTable.$inferInsert;
-export type SelectVehicle = typeof vehicleTable.$inferSelect;
+export type InsertPost = typeof postTable.$inferInsert;
+export type SelectPost = typeof postTable.$inferSelect;
 
-export type InsertDriver = typeof driverTable.$inferInsert;
-export type SelectDriver = typeof driverTable.$inferSelect;
-
-export type InsertBookings = typeof documentTable.$inferInsert;
-export type SelectBookings = typeof documentTable.$inferSelect;
+export type InsertComment = typeof commentTable.$inferInsert;
+export type SelectComment = typeof commentTable.$inferSelect;

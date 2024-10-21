@@ -16,19 +16,13 @@ export interface userInsertModel {
   name: string;
   username: string;
   password: string;
-  role: string;
 }
 
-export const formatNewData = (
-  data: userCreateModel,
-  hashPass: string,
-  role: string
-) => {
+export const formatNewData = (data: userCreateModel, hashPass: string) => {
   return {
     name: data.name,
     username: data.username,
     password: hashPass,
-    role: role,
   };
 };
 
@@ -42,7 +36,8 @@ export const userLoginSchema = z.object({
   password: z.string(),
 });
 
-export interface getUserPassAndRole {
-  hashedPassword: string | null;
-  role: string | null;
+export interface TypeListUsers {
+  id: number;
+  name: string | null;
+  username: string | null;
 }

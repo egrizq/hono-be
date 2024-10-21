@@ -1,25 +1,23 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { notFound } from "../helper/notFound";
-import { admin } from "../route/admin-route";
-import { approval } from "../route/approval-route";
 import { db } from "./database";
-import { usersTable, vehicleTable } from "../schema";
+import { usersTable } from "../schema";
 import { deleteCookie } from "hono/cookie";
+import { auth } from "../route/auth-route";
+import { users } from "../route/user-route";
+import { posts } from "../route/post-route";
 
 const app = new Hono();
 app.use(logger());
 
-app.route("/admin", admin);
-app.route("/approvals", approval);
+app.route("/auth", auth);
+app.route("/users", users);
+app.route("/posts", posts);
 
 app.delete("/clear", async (c) => {
   await db.delete(usersTable);
-  await db.delete(vehicleTable);
-
-  const usersToken = ["admin", "manager", "driver"];
-  usersToken.map((user) => deleteCookie(c, `${user}-token`));
-
+  deleteCookie(c, "token");
   return c.json({ message: "delete all cookies and data" });
 });
 
