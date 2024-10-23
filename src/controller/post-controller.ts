@@ -6,6 +6,7 @@ import { httpStatus } from "../helper/http-status";
 import { catchError, responseError } from "../error/error-response";
 import { verify } from "hono/jwt";
 import { errorMessage } from "../error/error-message";
+import type { Type } from "typescript";
 
 export class Post {
   private static userId: number | null = null;
@@ -33,6 +34,22 @@ export class Post {
 
       const requestJSON: TypePost = await context.req.json();
       const response = await PostService.Create(requestJSON, this.userId!);
+
+      return context.json(
+        { status_code: httpStatus.OK, data: response },
+        httpStatus.OK,
+      );
+    } catch (error) {
+      return await catchError(context, error);
+    }
+  }
+
+  static async Update(context: Context) {
+    try {
+      const { id } = context.req.param();
+
+      const requestJSON: TypePost = await context.req.json();
+      const response = await PostService.Update(requestJSON, Number(id));
 
       return context.json(
         { status_code: httpStatus.OK, data: response },

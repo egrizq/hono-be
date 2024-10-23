@@ -9,3 +9,4 @@ posts.use(async (c, next) => {
 });
 
 posts.post("/", (c) => Post.Create(c));
+posts.put("/:id", (c) => Post.Update(c));

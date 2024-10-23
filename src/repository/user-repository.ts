@@ -40,4 +40,16 @@ export class UserRepository {
 
     return insertedUser[0].id;
   }
+
+  static async getUsersList() {
+    const usersList = await db
+      .select({
+        id: usersTable.id,
+        name: usersTable.name,
+        username: usersTable.username,
+      })
+      .from(usersTable);
+
+    return usersList;
+  }
 }

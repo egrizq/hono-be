@@ -1,12 +1,17 @@
-import { TypePostSchema, type TypePost } from "../model/post-model";
+import {
+  TypePostSchema,
+  TypeUpdatePostSchema,
+  type TypePost,
+  type TypeReturnedUpdatedData,
+} from "../model/post-model";
 import { responseError } from "../error/error-response";
 import { httpStatus } from "../helper/http-status";
 import { errorMessage } from "../error/error-message";
-import { db } from "../app/database";
-import { postTable } from "../schema";
+import { PostRepository } from "../repository/post-repository";
 
 export class PostService {
-  static async Create(data: TypePost, id: number) {
+  static async Create(data: TypePost, id: number): Promise<string> {
+    // parse response JSON
     const parseResult = TypePostSchema.safeParse(data);
     if (!parseResult.success) {
       throw new responseError(
@@ -14,16 +19,10 @@ export class PostService {
         errorMessage.INVALID_DATA,
       );
     }
-    const isSuccess = await db
-      .insert(postTable)
-      .values({
-        title: data.title,
-        content: data.content,
-        user_id: id,
-      })
-      .returning({ id: postTable.id });
 
-    if (!isSuccess[0]) {
+    // insert new post
+    const isSuccess = await PostRepository.insertNewPost(data, id);
+    if (!isSuccess) {
       throw new responseError(
         httpStatus.INTERNAL_SERVER_ERROR,
         errorMessage.INTERNAL_SERVER_ERROR,
@@ -31,5 +30,42 @@ export class PostService {
     }
 
     return "Post successfully created!";
+  }
+
+  static async Update(
+    data: TypePost,
+    id: number,
+  ): Promise<TypeReturnedUpdatedData> {
+    // parse response JSON
+    const parseResult = TypeUpdatePostSchema.safeParse(data);
+    if (!parseResult.success) {
+      throw new responseError(
+        httpStatus.BAD_REQUEST,
+        errorMessage.INVALID_DATA,
+      );
+    }
+
+    // check is id available
+    const isIdAvailable = await PostRepository.checkId(id);
+    if (!isIdAvailable) {
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.EMPTY_ID);
+    }
+
+    // update post
+    const isUpdateSuccess = await PostRepository.updatePost(data, id);
+    if (!isUpdateSuccess) {
+      throw new responseError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // return new updated data
+    const response: TypeReturnedUpdatedData = {
+      message: "successfully updated post!",
+      data: isUpdateSuccess!,
+    };
+
+    return response;
   }
 }
