@@ -48,7 +48,7 @@ export class PostService {
     // check is id available
     const isIdAvailable = await PostRepository.checkId(id);
     if (!isIdAvailable) {
-      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.EMPTY_ID);
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
     }
 
     // update post
@@ -67,5 +67,25 @@ export class PostService {
     };
 
     return response;
+  }
+
+  static async Delete(id: number) {
+    // check is id available
+    const isIdAvailable = await PostRepository.checkId(id);
+    if (!isIdAvailable) {
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
+    }
+
+    const isDeleteSuccess = await PostRepository.deletePost(id);
+    console.log(isDeleteSuccess.id);
+
+    if (!isDeleteSuccess) {
+      throw new responseError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return "Successfully delete post!";
   }
 }

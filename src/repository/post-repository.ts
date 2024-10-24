@@ -39,4 +39,13 @@ export class PostRepository {
 
     return updateData[0];
   }
+
+  static async deletePost(id: number) {
+    const isDeleteSuccess = await db
+      .delete(postTable)
+      .where(eq(postTable.id, id))
+      .returning({ id: postTable.id });
+
+    return isDeleteSuccess[0];
+  }
 }
