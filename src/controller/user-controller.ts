@@ -3,7 +3,7 @@ import { UsersService } from "../service/user-service";
 import { httpStatus } from "../helper/http-status";
 import { catchError } from "../error/error-response";
 
-export class Users {
+export class UserController {
   static async list(context: Context) {
     try {
       const responseData = await UsersService.List();

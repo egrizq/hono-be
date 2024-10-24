@@ -7,6 +7,7 @@ import { deleteCookie } from "hono/cookie";
 import { auth } from "../route/auth-route";
 import { users } from "../route/user-route";
 import { posts } from "../route/post-route";
+import { comments } from "../route/comment-route";
 
 const app = new Hono();
 app.use(logger());
@@ -14,6 +15,7 @@ app.use(logger());
 app.route("/auth", auth);
 app.route("/users", users);
 app.route("/posts", posts);
+app.route("/comments", comments);
 
 app.delete("/clear", async (c) => {
   await db.delete(usersTable);

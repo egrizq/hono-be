@@ -7,7 +7,7 @@ import { AdminService } from "../service/auth-service";
 import { httpStatus } from "../helper/http-status";
 import { catchError } from "../error/error-response";
 
-export class UserController {
+export class AuthController {
   static async register(context: Context) {
     try {
       const requestJSON: userCreateModel = await context.req.json();

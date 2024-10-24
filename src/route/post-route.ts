@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { Post } from "../controller/post-controller";
+import { PostController } from "../controller/post-controller";
 import { middlewareToken } from "../middleware/token-middleware";
 
 export const posts = new Hono();
@@ -10,6 +10,6 @@ posts.use(async (c, next) => {
 });
 
 // posts route
-posts.post("/", (c) => Post.Create(c));
-posts.put("/:id", (c) => Post.Update(c));
-posts.delete("/:id", (c) => Post.Delete(c));
+posts.post("/", (c) => PostController.Create(c));
+posts.put("/:id", (c) => PostController.Update(c));
+posts.delete("/:id", (c) => PostController.Delete(c));

@@ -8,7 +8,7 @@ import { verify } from "hono/jwt";
 import { errorMessage } from "../error/error-message";
 import { checkId } from "../helper/check-id";
 
-export class Post {
+export class PostController {
   private static userId: number | null = null;
 
   private static async verifyJWT(context: Context) {
@@ -25,7 +25,7 @@ export class Post {
     }
     const { id } = await verify(signedCookie!, process.env.JWT!);
 
-    Post.userId = Number(id);
+    PostController.userId = Number(id);
   }
 
   static async Create(context: Context) {
