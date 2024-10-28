@@ -11,3 +11,4 @@ comments.use(async (c, next) => {
 
 // posts route
 comments.post("/:id", (c) => CommentController.Create(c));
+comments.delete("/:id", (c) => CommentController.Delete(c));

@@ -35,8 +35,6 @@ export class CommentController {
       const { id } = context.req.param();
       const postId = checkId(id);
 
-      console.log("postid", id, "userId", this.userId);
-
       const requestJSON: TypeComment = await context.req.json();
       const response = await CommentService.Create(
         requestJSON,
@@ -44,6 +42,21 @@ export class CommentController {
         this.userId!,
       );
 
+      return context.json(
+        { status_code: httpStatus.OK, message: response },
+        httpStatus.OK,
+      );
+    } catch (error) {
+      return await catchError(context, error);
+    }
+  }
+
+  static async Delete(context: Context) {
+    try {
+      const { id } = context.req.param();
+      const commentId = checkId(id);
+
+      const response = await CommentService.Delete(commentId);
       return context.json(
         { status_code: httpStatus.OK, message: response },
         httpStatus.OK,

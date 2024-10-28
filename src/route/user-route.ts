@@ -8,4 +8,6 @@ users.use(async (c, next) => {
   return await middlewareToken(c, next);
 });
 
-users.get("/", (c) => UserController.list(c));
+users.get("/", (c) => UserController.List(c));
+users.put("/:id", (c) => UserController.Update(c));
+users.delete("/:id", (c) => UserController.Delete(c));

@@ -1,8 +1,5 @@
 import type { Context } from "hono";
-import {
-  type userLoginModel,
-  type userCreateModel,
-} from "../model/users-model";
+import { type TypeUserModel, type userLoginModel } from "../model/users-model";
 import { AdminService } from "../service/auth-service";
 import { httpStatus } from "../helper/http-status";
 import { catchError } from "../error/error-response";
@@ -10,7 +7,7 @@ import { catchError } from "../error/error-response";
 export class AuthController {
   static async register(context: Context) {
     try {
-      const requestJSON: userCreateModel = await context.req.json();
+      const requestJSON: TypeUserModel = await context.req.json();
       const response = await AdminService.register(context, requestJSON);
 
       return context.json(

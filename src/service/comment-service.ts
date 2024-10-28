@@ -21,7 +21,7 @@ export class CommentService {
     }
 
     // check postId
-    const isPostIdAvailable = await PostRepository.checkId(postId);
+    const isPostIdAvailable = await PostRepository.checkPostId(postId);
     if (!isPostIdAvailable) {
       throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
     }
@@ -40,5 +40,26 @@ export class CommentService {
 
     // return
     return "Successfully inserted new comment to post!";
+  }
+
+  static async Delete(commentId: number) {
+    // check comment id available
+    const isCommentIdAvailable =
+      await CommentRepository.isCommentAvailable(commentId);
+    if (!isCommentIdAvailable) {
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
+    }
+
+    // delete comment
+    const isDeleteSuccess = await CommentRepository.delete(commentId);
+    if (!isDeleteSuccess) {
+      throw new responseError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // return
+    return "Successfully delete comment!";
   }
 }

@@ -46,7 +46,7 @@ export class PostService {
     }
 
     // check is id available
-    const isIdAvailable = await PostRepository.checkId(id);
+    const isIdAvailable = await PostRepository.checkPostId(id);
     if (!isIdAvailable) {
       throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
     }
@@ -69,15 +69,14 @@ export class PostService {
     return response;
   }
 
-  static async Delete(id: number) {
+  static async Delete(postId: number) {
     // check is id available
-    const isIdAvailable = await PostRepository.checkId(id);
+    const isIdAvailable = await PostRepository.checkPostId(postId);
     if (!isIdAvailable) {
       throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
     }
 
-    const isDeleteSuccess = await PostRepository.deletePost(id);
-    console.log(isDeleteSuccess.id);
+    const isDeleteSuccess = await PostRepository.deletePost(postId);
 
     if (!isDeleteSuccess) {
       throw new responseError(
@@ -87,5 +86,20 @@ export class PostService {
     }
 
     return "Successfully delete post!";
+  }
+
+  static async Get(postId: number) {
+    const isIdAvailable = await PostRepository.checkPostId(postId);
+    if (!isIdAvailable) {
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.INVALID_ID);
+    }
+
+    // get post with comment
+    const postData = await PostRepository.getPostId(postId);
+    if (!postData) {
+      throw new responseError(httpStatus.BAD_REQUEST, errorMessage.EMPTY_DATA);
+    }
+
+    return postData;
   }
 }

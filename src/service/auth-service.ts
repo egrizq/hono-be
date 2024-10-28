@@ -81,14 +81,14 @@ export class AdminService {
     const { username, password } = parseResult.data;
 
     //* check username exist
-    const { id, hashedPassword } =
-      await UserRepository.findUserByUsername(username);
-    if (!hashedPassword) {
+    const isUserAvailable = await UserRepository.findUserByUsername(username);
+    if (!isUserAvailable) {
       throw new responseError(
         httpStatus.UNAUTHORIZED,
         errorMessage.USERNAME_PASSWORD_INCORRECT,
       );
     }
+    const { hashedPassword, id } = isUserAvailable;
 
     //* check password
     const isPasswordCorrect = await Bun.password.verify(

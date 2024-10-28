@@ -33,3 +33,21 @@ export interface TypeReturnedUpdatedData {
     content: string | null;
   };
 }
+
+export interface TypeReturnedPostId {
+  id: number;
+  title: string;
+  content: string;
+  comment: string[];
+}
+
+interface TypeFormatPost {
+  postId: number | null;
+  title: string | null;
+  content: string | null;
+  comment: string | null;
+}
+
+// export const formatGetPostId = (data: TypeFormatPost): TypeReturnedPostId => {
+//
+// };

@@ -44,6 +44,24 @@ export class PostController {
     }
   }
 
+  static async Get(context: Context) {
+    try {
+      const { id } = context.req.param();
+      const postId = checkId(id);
+
+      const response = await PostService.Get(postId);
+
+      return context.json(
+        {
+          status_code: httpStatus.OK,
+          data: response,
+        },
+        httpStatus.OK,
+      );
+    } catch (error) {
+      return await catchError(context, error);
+    }
+  }
   static async Update(context: Context) {
     try {
       const { id } = context.req.param();

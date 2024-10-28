@@ -11,5 +11,6 @@ posts.use(async (c, next) => {
 
 // posts route
 posts.post("/", (c) => PostController.Create(c));
+posts.get("/:id", (c) => PostController.Get(c));
 posts.put("/:id", (c) => PostController.Update(c));
 posts.delete("/:id", (c) => PostController.Delete(c));

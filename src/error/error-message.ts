@@ -17,8 +17,10 @@ export class errorMessage {
     "The username or password you entered is incorrect.";
   static readonly EMPTY_TOKEN =
     "Your session has expired or you're not logged in. Please log in to continue.";
-  static readonly EMPTY_DATA =
+  static readonly EMPTY_USERS =
     "No users found in the database. Please verify your search criteria or try again later.";
   static readonly INVALID_ID =
     "No post id available. Please use valid id to update the post";
+  static readonly EMPTY_DATA =
+    "No post is found in the database. Please verify your search criteria or try again later";
 }

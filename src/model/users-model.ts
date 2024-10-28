@@ -1,24 +1,28 @@
 import { z } from "zod";
 
-export interface userCreateModel {
-  name: string;
-  username: string;
-  password: string;
+export interface TypeUserModel {
+  name?: string;
+  username?: string;
+  password?: string;
 }
 
-export const userRegisterSchema = z.object({
-  name: z.string().min(5),
-  username: z.string().min(5),
-  password: z.string().min(5),
-});
+export const userRegisterSchema = z
+  .object({
+    name: z.string().min(5),
+    username: z.string().min(5),
+    password: z.string().min(5),
+  })
+  .strict();
 
-export interface userInsertModel {
-  name: string;
-  username: string;
-  password: string;
-}
+export const userUpdateSchema = z
+  .object({
+    name: z.string().min(5).optional(),
+    username: z.string().min(5).optional(),
+    password: z.string().min(5).optional(),
+  })
+  .strict();
 
-export const formatNewData = (data: userCreateModel, hashPass: string) => {
+export const formatNewData = (data: TypeUserModel, hashPass: string) => {
   return {
     name: data.name,
     username: data.username,
@@ -40,4 +44,9 @@ export interface TypeListUsers {
   id: number;
   name: string | null;
   username: string | null;
+}
+
+export interface TypeFindUsername {
+  id: number;
+  hashedPassword: string | null;
 }

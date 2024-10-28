@@ -1,12 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../app/database";
 import { usersTable } from "../schema";
-import type { userInsertModel } from "../model/users-model";
-
-interface TypeFindUsername {
-  id: number;
-  hashedPassword: string | null;
-}
+import type { TypeFindUsername, TypeUserModel } from "../model/users-model";
 
 export class UserRepository {
   static async findUserByUsername(username: string): Promise<TypeFindUsername> {
@@ -32,13 +27,41 @@ export class UserRepository {
     return result.length === 0;
   }
 
-  static async insertNewUser(data: userInsertModel): Promise<number | null> {
+  static async isUsernameIdExist(userId: number): Promise<boolean> {
+    const result = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, userId))
+      .limit(1);
+
+    return result.length === 0;
+  }
+
+  static async insertNewUser(data: TypeUserModel): Promise<number | null> {
     const insertedUser = await db
       .insert(usersTable)
       .values(data)
       .returning({ id: usersTable.id });
 
     return insertedUser[0].id;
+  }
+
+  static async updateUserData(updated: TypeUserModel, userId: number) {
+    const isSuccess = await db
+      .update(usersTable)
+      .set({
+        name: updated.name,
+        username: updated.username,
+        password: updated.password,
+      })
+      .where(eq(usersTable.id, userId))
+      .returning({
+        name: usersTable.name,
+        username: usersTable.username,
+        password: usersTable.password,
+      });
+
+    return isSuccess[0];
   }
 
   static async getUsersList() {
@@ -51,5 +74,14 @@ export class UserRepository {
       .from(usersTable);
 
     return usersList;
+  }
+
+  static async deleteUser(userId: number) {
+    const isSuccessDeleteUser = await db
+      .delete(usersTable)
+      .where(eq(usersTable.id, userId))
+      .returning();
+
+    return isSuccessDeleteUser[0];
   }
 }
